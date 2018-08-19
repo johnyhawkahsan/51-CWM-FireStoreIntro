@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "836618684698",
+    "firebase_url": "https://cwm-firestoreintro.firebaseio.com",
+    "project_id": "cwm-firestoreintro",
+    "storage_bucket": "cwm-firestoreintro.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:836618684698:android:62397815f5518c16",
+        "android_client_info": {
+          "package_name": "com.ahsan.a51_cwm_firestoreintro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "836618684698-5dcl8kh4u88jc6ql2t11njld80lqsgad.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFn9KI2e_wnXaVCuiH2Cj3mK9u-tkMDOo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
