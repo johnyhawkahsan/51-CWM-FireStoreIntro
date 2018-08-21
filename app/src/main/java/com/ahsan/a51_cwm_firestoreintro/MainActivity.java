@@ -81,34 +81,17 @@ public class MainActivity extends AppCompatActivity implements
         getNotes();
     }
 
+    //Method implemented from IMainActivity interface.
     @Override
     public void deleteNote(final Note note){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        DocumentReference noteRef = db
-                .collection("notes")
-                .document(note.getNote_id());
 
-        noteRef.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
-                    makeSnackBarMessage("Deleted note");
-                    mNoteRecyclerViewAdapter.removeNote(note);
-                }
-                else{
-                    makeSnackBarMessage("Failed. Check log.");
-                }
-            }
-        });
     }
 
-    @Override
-    public void onRefresh() {
-        getNotes();
-        mSwipeRefreshLayout.setRefreshing(false);
-    }
 
+
+    //Get all notes from FireStoe and display in RecyclerView
     private void getNotes(){
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -116,120 +99,71 @@ public class MainActivity extends AppCompatActivity implements
         CollectionReference notesCollectionRef = db
                 .collection("notes");
 
-        Query notesQuery = null;
-        if(mLastQueriedDocument != null){
-           notesQuery = notesCollectionRef
-                    .whereEqualTo("user_id", FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .orderBy("timestamp", Query.Direction.ASCENDING)
-                    .startAfter(mLastQueriedDocument);
-        }
-        else{
-            notesQuery = notesCollectionRef
-                    .whereEqualTo("user_id", FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .orderBy("timestamp", Query.Direction.ASCENDING);
-        }
-
-        notesQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-
-//                    for(QueryDocumentSnapshot document: task.getResult()){
-//                        Note note = document.toObject(Note.class);
-//                        mNotes.add(note);
-//                        Log.d(TAG, "onComplete: got a new note. Position: " + (mNotes.size() - 1));
-//                    }
-
-                    if(task.getResult().size() != 0){
-                        mLastQueriedDocument = task.getResult().getDocuments()
-                                .get(task.getResult().size() -1);
-                    }
-
-                    mNoteRecyclerViewAdapter.notifyDataSetChanged();
-                }
-                else{
-                    makeSnackBarMessage("Query Failed. Check Logs.");
-                }
-            }
-        });
     }
 
+    //Initialize RecyclerView
     private void initRecyclerView(){
-        if(mNoteRecyclerViewAdapter == null){
-            mNoteRecyclerViewAdapter = new NoteRecyclerViewAdapter(this, mNotes);
-        }
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setAdapter(mNoteRecyclerViewAdapter);
+
     }
 
+    //Method implemented from IMainActivity interface.
     @Override
     public void updateNote(final Note note){
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        DocumentReference noteRef = db
-                .collection("notes")
-                .document(note.getNote_id());
 
-        noteRef.update(
-                "title", note.getTitle(),
-                "content", note.getContent()
-        ).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
-                    makeSnackBarMessage("Updated note");
-                    mNoteRecyclerViewAdapter.updateNote(note);
-                }
-                else{
-                    makeSnackBarMessage("Failed. Check log.");
-                }
-            }
-        });
     }
 
+    //Method implemented from IMainActivity interface.
     @Override
     public void onNoteSelected(Note note) {
-        ViewNoteDialog dialog = ViewNoteDialog.newInstance(note);
-        dialog.show(getSupportFragmentManager(), getString(R.string.dialog_view_note));
+
     }
 
+    //Method implemented from IMainActivity interface.
     @Override
-    public void createNewNote(String title, String content) {
-
+    public void createNewNote(String title, String content) //Title and content are received from NewNoteDialog
+    {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        DocumentReference newNoteRef = db
-                .collection("notes")
-                .document();
+        //You can think of DocumentReference as an object and CollectionReference as a list of objects.
+        DocumentReference newNoteRef = db.collection("notes") //Create database named "notes"
+                .document(); //Tell FireStore you're inserting a new document
 
+        //Our Note object that we want to insert to "notes" collection
         Note note = new Note();
         note.setTitle(title);
         note.setContent(content);
-        note.setNote_id(newNoteRef.getId());
         note.setUser_id(userId);
+        note.setNote_id(newNoteRef.getId());
 
-        newNoteRef.set(note).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
-                    makeSnackBarMessage("Created new note");
-                    getNotes();
-                }
-                else{
-                    makeSnackBarMessage("Failed. Check log.");
-                }
-            }
-        });
+        //Now upload Note object to FireStore
+        newNoteRef.set(note)
+                //onComplete is better than onSuccess because it listens for both onSuccess and onFailure
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()){
+                            makeSnackBarMessage("Created new note");
+                        } else {
+                            makeSnackBarMessage("Failed, Check log");
+                        }
+                    }
+                });
+
+
+
+
     }
 
-    private void makeSnackBarMessage(String message){
-        Snackbar.make(mParentLayout, message, Snackbar.LENGTH_SHORT).show();
-    }
 
 
+
+
+
+    //New Note method when + button is clicked
     @Override
     public void onClick(View view) {
 
@@ -243,6 +177,20 @@ public class MainActivity extends AppCompatActivity implements
             }
         }
     }
+
+
+    private void makeSnackBarMessage(String message){
+        Snackbar.make(mParentLayout, message, Snackbar.LENGTH_SHORT).show();
+    }
+
+
+    @Override
+    public void onRefresh() {
+        getNotes();
+        mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -263,10 +211,8 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private void signOut(){
-        Log.d(TAG, "signOut: signing out");
-        FirebaseAuth.getInstance().signOut();
-    }
+
+
 
     /*
             ----------------------------- Firebase setup ---------------------------------
@@ -291,6 +237,11 @@ public class MainActivity extends AppCompatActivity implements
                 }
             }
         };
+    }
+
+    private void signOut(){
+        Log.d(TAG, "signOut: signing out");
+        FirebaseAuth.getInstance().signOut();
     }
 
     @Override

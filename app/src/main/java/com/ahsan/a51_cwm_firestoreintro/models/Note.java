@@ -12,6 +12,7 @@ import java.util.Date;
  * Created by User on 5/14/2018.
  */
 
+//Annotation can prevent crashes - It will ignore extra fields retrieved by a query
 @IgnoreExtraProperties
 public class Note implements Parcelable{
 

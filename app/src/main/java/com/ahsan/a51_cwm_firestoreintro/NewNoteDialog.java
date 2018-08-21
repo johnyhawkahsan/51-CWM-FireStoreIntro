@@ -65,8 +65,9 @@ public class NewNoteDialog extends DialogFragment implements View.OnClickListene
                 String title = mTitle.getText().toString();
                 String content = mContent.getText().toString();
 
+                //We could also use && or || here along with !content.equals("") to also check for content.
                 if(!title.equals("")){
-                    mIMainActivity.createNewNote(title, content);
+                    mIMainActivity.createNewNote(title, content); //Call this method to
                     getDialog().dismiss();
                 }
                 else{
@@ -82,6 +83,7 @@ public class NewNoteDialog extends DialogFragment implements View.OnClickListene
         }
     }
 
+    //Instantiate our interface in onAttach()
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

@@ -60,14 +60,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         if(view.getId() == R.id.email_sign_in_button){
             //check if the fields are filled out
-            if(!isEmpty(mEmail.getText().toString())
-                    && !isEmpty(mPassword.getText().toString())){
+            if(!isEmpty(mEmail.getText().toString()) && !isEmpty(mPassword.getText().toString()))
+            {
                 Log.d(TAG, "onClick: attempting to authenticate.");
 
                 showDialog();
 
-                FirebaseAuth.getInstance().signInWithEmailAndPassword(mEmail.getText().toString(),
-                        mPassword.getText().toString())
+                FirebaseAuth.getInstance()
+                        .signInWithEmailAndPassword
+                        (mEmail.getText().toString(),
+                                mPassword.getText().toString())
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -75,11 +77,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 hideDialog();
 
                             }
-                        }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Snackbar.make(getCurrentFocus().getRootView(), "Authentication Failed", Snackbar.LENGTH_SHORT).show();
-                        hideDialog();
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Snackbar.make(getCurrentFocus().getRootView(), "Authentication Failed", Snackbar.LENGTH_SHORT).show();
+                                hideDialog();
                     }
                 });
             }else{
@@ -88,6 +91,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    //If Google Services is available - Return true
     public boolean servicesOK(){
         Log.d(TAG, "servicesOK: Checking Google Services.");
 
@@ -96,7 +100,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if(isAvailable == ConnectionResult.SUCCESS){
             //everything is ok and the user can make mapping requests
             Log.d(TAG, "servicesOK: Play Services is OK");
-            return true;
+            return true; //Return true if OK
         }
         else if(GoogleApiAvailability.getInstance().isUserResolvableError(isAvailable)){
             //an error occured, but it's resolvable
@@ -123,7 +127,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void showDialog(){
         mProgressBar.setVisibility(View.VISIBLE);
-
     }
 
     private void hideDialog(){
@@ -148,6 +151,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
 
+
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                     Toast.makeText(LoginActivity.this, "Signed in", Toast.LENGTH_SHORT).show();
 
@@ -168,6 +172,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onStart() {
         super.onStart();
+        Log.d(TAG, "onStart: addAuthStateListener()");
         FirebaseAuth.getInstance().addAuthStateListener(mAuthListener);
     }
 
@@ -175,6 +180,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onStop() {
         super.onStop();
         if (mAuthListener != null) {
+            Log.d(TAG, "onStop: removeAuthStateListener()");
             FirebaseAuth.getInstance().removeAuthStateListener(mAuthListener);
         }
     }

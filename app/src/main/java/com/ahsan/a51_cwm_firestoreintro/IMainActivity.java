@@ -2,7 +2,7 @@ package com.ahsan.a51_cwm_firestoreintro;
 import com.ahsan.a51_cwm_firestoreintro.models.Note;
 
 /**
- * Created by User on 5/14/2018.
+Because of this IMainActivity Interface, we are able to perform all the task in MainActivity.
  */
 
 public interface IMainActivity {
