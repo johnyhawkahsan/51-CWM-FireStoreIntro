@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements
     //Because this project doesn't show us register and login methods, I manually created user in FireBase Authentication and pasted it's user id
     private static final String UID = "2ah0Ahi6G2W1LIflYiJuKyEb5LJ2";
 
-    //Firebase
+    //FireBase
     private FirebaseAuth.AuthStateListener mAuthListener;
 
 
@@ -91,19 +91,70 @@ public class MainActivity extends AppCompatActivity implements
 
 
 
-    //Get all notes from FireStoe and display in RecyclerView
+    //Get all notes from FireStore and display in RecyclerView
     private void getNotes(){
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        //You can think of DocumentReference as an object and CollectionReference as a list of objects.
         CollectionReference notesCollectionRef = db
                 .collection("notes");
 
+        //Searching functionality is a lot better in FireStore, it indexes all the data = First need to "Index" data in Console
+        Query notesQuery = null;
+
+        //We are doing this to prevent showing duplicate data after refreshing
+        if (mLastQueriedDocument != null){
+            Log.d(TAG, "(Query run after refresh) if:  mLastQueriedDocument != null");
+            notesQuery = notesCollectionRef
+                    .whereEqualTo("user_id", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .orderBy("timestamp", Query.Direction.ASCENDING)
+                    .startAfter(mLastQueriedDocument);//Start after previous stored DocumentSnapshot, means only load newly added items to the list.
+
+        } else {
+            //This is our initial query, means when the app runs the first time, this will run.
+            Log.d(TAG, "(Query initial run) else:  mLastQueriedDocument == null");
+            notesQuery = notesCollectionRef
+                    .whereEqualTo("user_id", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .orderBy("timestamp", Query.Direction.ASCENDING);
+        }
+
+        //get() method gets us all data associated with the above query in list form.
+        notesQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                if (task.isSuccessful()){
+
+                    //TODO: Instead of QueryDocumentSnapshot used in Mitch Tabian's Tutorial(Feature of FireStore 12 I think), I tried this and it worked.
+                    //Loop through all the received data and add to our list of objects
+                    for (DocumentSnapshot queryDocumentSnapshot : task.getResult()){
+                        Note note = queryDocumentSnapshot.toObject(Note.class);
+                        mNotes.add(note);
+                        Log.d(TAG, "onComplete: note added: " + note.getTitle());
+                    }
+
+                    if (task.getResult().size() != 0){
+                        mLastQueriedDocument = task.getResult().getDocuments().get(task.getResult().size() -1);
+                    }
+
+                    mNoteRecyclerViewAdapter.notifyDataSetChanged();
+
+                } else {
+                    makeSnackBarMessage("Query Failed. Check Logs.");
+                }
+
+            }
+        });
     }
 
     //Initialize RecyclerView
     private void initRecyclerView(){
-
+        if (mNoteRecyclerViewAdapter == null){
+            mNoteRecyclerViewAdapter = new NoteRecyclerViewAdapter(this, mNotes);
+        }
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setAdapter(mNoteRecyclerViewAdapter);
     }
 
     //Method implemented from IMainActivity interface.
@@ -120,6 +171,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onNoteSelected(Note note) {
 
     }
+
 
     //Method implemented from IMainActivity interface.
     @Override

@@ -27,17 +27,19 @@ public class NoteRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
     private Context mContext;
     private int mSelectedNoteIndex;
 
+    //Constructor for NoteRecyclerViewAdapter
     public NoteRecyclerViewAdapter(Context context, ArrayList<Note> notes) {
         mNotes = notes;
         mContext = context;
     }
 
+
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder holder;
-        View view = LayoutInflater.from(parent.getContext()).inflate(
-                R.layout.layout_note_list_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_note_list_item, parent, false);
 
         holder = new ViewHolder(view);
 
@@ -62,12 +64,14 @@ public class NoteRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
     }
 
 
+    //Update RecyclerView items
     public void updateNote(Note note){
        mNotes.get(mSelectedNoteIndex).setTitle(note.getTitle());
        mNotes.get(mSelectedNoteIndex).setContent(note.getContent());
        notifyDataSetChanged();
     }
 
+    //Remove item from RecyclerView
     public void removeNote(Note note){
         mNotes.remove(note);
         notifyDataSetChanged();
@@ -79,8 +83,8 @@ public class NoteRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         mIMainActivity = (IMainActivity) mContext;
     }
 
+    //Our ViewHolder Class
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-
         TextView title, timestamp;
 
         public ViewHolder(View itemView) {
@@ -94,7 +98,7 @@ public class NoteRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         @Override
         public void onClick(View view) {
             mSelectedNoteIndex = getAdapterPosition();
-            mIMainActivity.onNoteSelected(mNotes.get(mSelectedNoteIndex));
+            mIMainActivity.onNoteSelected(mNotes.get(mSelectedNoteIndex));//Execute interface method to send note index to MainActivity.
         }
     }
 }
