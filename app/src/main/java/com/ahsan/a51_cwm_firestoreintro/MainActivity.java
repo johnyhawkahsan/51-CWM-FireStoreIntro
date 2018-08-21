@@ -84,8 +84,25 @@ public class MainActivity extends AppCompatActivity implements
     //Method implemented from IMainActivity interface.
     @Override
     public void deleteNote(final Note note){
+        Log.d(TAG, "deleteNote: Note received from ViewNoteDialog. Note_id= " + note.getNote_id());
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        DocumentReference noteRef = db.collection("notes")
+                .document(note.getNote_id());
+
+        noteRef.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+
+                    makeSnackBarMessage("Deleted Note. " + note.getNote_id());
+                    mNoteRecyclerViewAdapter.removeNote(note); //Also remove note from RecyclerView
+
+                } else {
+                    makeSnackBarMessage("Failed. Check Log.");
+                }
+            }
+        });
 
     }
 
@@ -131,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements
                     for (DocumentSnapshot queryDocumentSnapshot : task.getResult()){
                         Note note = queryDocumentSnapshot.toObject(Note.class);
                         mNotes.add(note);
-                        Log.d(TAG, "onComplete: note added: " + note.getTitle());
+                        Log.d(TAG, "queryDocumentSnapshot: note added: " + note.getTitle());
                     }
 
                     if (task.getResult().size() != 0){
@@ -160,16 +177,34 @@ public class MainActivity extends AppCompatActivity implements
     //Method implemented from IMainActivity interface.
     @Override
     public void updateNote(final Note note){
-
+        Log.d(TAG, "updateNote: received note in MainActivity from ViewNoteDialog. Note Title = " + note.getTitle());
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference noteRef = db.collection("notes")
+                .document(note.getNote_id());//Get note who's note id matches with this one
 
+        noteRef.update("title", note.getTitle(),
+                            "content", note.getContent())
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()){
+                            makeSnackBarMessage("Update Note");
+                            mNoteRecyclerViewAdapter.updateNote(note);
+                        } else {
+                            makeSnackBarMessage("Failed. Check Log.");
+                        }
+                    }
+                });
 
     }
 
     //Method implemented from IMainActivity interface.
+    //When Note is selected from RecyclerView, this note object is opened in ViewNoteDialog. Visit ViewNoteDialog newInstance method.
     @Override
     public void onNoteSelected(Note note) {
-
+        Log.d(TAG, "onNoteSelected: received note in MainActivity from RecyclerViewAdapter. Note Title = " + note.getTitle());
+        ViewNoteDialog dialog = ViewNoteDialog.newInstance(note);
+        dialog.show(getSupportFragmentManager(), getString(R.string.dialog_new_note));
     }
 
 
@@ -199,14 +234,13 @@ public class MainActivity extends AppCompatActivity implements
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()){
                             makeSnackBarMessage("Created new note");
+                            //Note: After adding new note, RecyclerView does not get automatically updated. We need to refresh by swiping up.
+                            //Editing/ Updating is a different method, it required instant updating of RecyclerView with new data.
                         } else {
                             makeSnackBarMessage("Failed, Check log");
                         }
                     }
                 });
-
-
-
 
     }
 

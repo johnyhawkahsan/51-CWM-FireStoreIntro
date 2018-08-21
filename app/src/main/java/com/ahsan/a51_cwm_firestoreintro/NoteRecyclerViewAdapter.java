@@ -3,6 +3,7 @@ package com.ahsan.a51_cwm_firestoreintro;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,6 +67,7 @@ public class NoteRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     //Update RecyclerView items
     public void updateNote(Note note){
+        Log.d(TAG, "updateNote: Change has been made to Database, now update RecyclerView with new info.");
        mNotes.get(mSelectedNoteIndex).setTitle(note.getTitle());
        mNotes.get(mSelectedNoteIndex).setContent(note.getContent());
        notifyDataSetChanged();
@@ -99,6 +101,7 @@ public class NoteRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         public void onClick(View view) {
             mSelectedNoteIndex = getAdapterPosition();
             mIMainActivity.onNoteSelected(mNotes.get(mSelectedNoteIndex));//Execute interface method to send note index to MainActivity.
+            Log.i(TAG, "onClick: clicked on node at position = " + mSelectedNoteIndex + ", now send this item through interface to MainActivity. mNotes.get(mSelectedNoteIndex).getTitle() = " + mNotes.get(mSelectedNoteIndex).getTitle());
         }
     }
 }

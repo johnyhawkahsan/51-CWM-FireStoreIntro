@@ -69,6 +69,7 @@ public class NewNoteDialog extends DialogFragment implements View.OnClickListene
                 if(!title.equals("")){
                     mIMainActivity.createNewNote(title, content); //Call this method to
                     getDialog().dismiss();
+
                 }
                 else{
                     Toast.makeText(getActivity(), "Enter a title", Toast.LENGTH_SHORT).show();

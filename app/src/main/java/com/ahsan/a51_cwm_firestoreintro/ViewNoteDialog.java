@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,13 +30,16 @@ public class ViewNoteDialog extends DialogFragment implements View.OnClickListen
     private IMainActivity mIMainActivity;
     private Note mNote;
 
+    //This constructor of class is called from Main Activity.
     public static ViewNoteDialog newInstance(Note note) {
+
         ViewNoteDialog dialog = new ViewNoteDialog();
 
         Bundle args = new Bundle();
         args.putParcelable("note", note);
         dialog.setArguments(args);
 
+        Log.d(TAG, "newInstance: send note object in args form. args = " + args);
         return dialog;
     }
 
@@ -47,7 +51,9 @@ public class ViewNoteDialog extends DialogFragment implements View.OnClickListen
         int theme = android.R.style.Theme_Holo_Light_Dialog;
         setStyle(style, theme);
 
+        //Get note data from MainActivity. The interesting thing is note arguments are set here in newInstance() method.
         mNote = getArguments().getParcelable("note");
+        Log.d(TAG, "onCreate: received getArguments from MainActivity in onCreate method of ViewNoteDialog.  mNote.getTitle()= " + mNote.getTitle());
     }
 
     @Nullable
@@ -85,10 +91,13 @@ public class ViewNoteDialog extends DialogFragment implements View.OnClickListen
 
                 if(!title.equals("")){
 
+                    //update the note using newly entered data in title and content fields.
                     mNote.setTitle(title);
                     mNote.setContent(content);
 
                     mIMainActivity.updateNote(mNote);
+                    Log.d(TAG, "onClick: updateNote(mNote). mNote.getTitle() = " + mNote.getTitle());
+
                     getDialog().dismiss();
                 }
                 else{
