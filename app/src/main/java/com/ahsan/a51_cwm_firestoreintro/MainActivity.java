@@ -26,7 +26,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
+//import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -134,11 +134,11 @@ public class MainActivity extends AppCompatActivity implements
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()){
 
-                    for(QueryDocumentSnapshot document: task.getResult()){
-                        Note note = document.toObject(Note.class);
-                        mNotes.add(note);
+//                    for(QueryDocumentSnapshot document: task.getResult()){
+//                        Note note = document.toObject(Note.class);
+//                        mNotes.add(note);
 //                        Log.d(TAG, "onComplete: got a new note. Position: " + (mNotes.size() - 1));
-                    }
+//                    }
 
                     if(task.getResult().size() != 0){
                         mLastQueriedDocument = task.getResult().getDocuments()

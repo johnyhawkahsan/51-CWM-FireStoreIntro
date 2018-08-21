@@ -20,23 +20,31 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    testCompile 'junit:junit:4.12'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:25.4.0'
+    implementation 'com.android.support:support-compat:25.4.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    testImplementation 'junit:junit:4.12'
+	
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+	
     //Android Percent Support Library
-    compile 'com.android.support:percent:25.3.1'
+    implementation 'com.android.support:percent:25.4.0'
+
     //Android Support Design Library
-    compile 'com.android.support:design:25.3.1'
-    compile 'com.google.firebase:firebase-core:12.0.1'
+    implementation 'com.android.support:design:25.4.0'
+
     // Firestore
-    compile 'com.google.firebase:firebase-firestore:12.0.1'
+    implementation 'com.google.firebase:firebase-firestore:11.8.0'
+
     //Firebase Authentication
-    compile 'com.google.firebase:firebase-auth:12.0.1'
-    compile 'com.android.support:support-annotations:25.3.1'
+
+    //Ahsan: this fucking line took my whole day. Was causing this error "All com.android.support libraries must use the exact same version specification"
+    //Although, I learned a lot to create to generate gradle -> [AppName] -> tasks -> android -> androidDependencies
+    //Please read this article "https://proandroiddev.com/android-gradle-and-the-curious-case-of-invisible-dependency-7f1bcc8bb79e"
+    //implementation 'com.google.firebase:firebase-auth:12.0.1'
+    implementation 'com.google.firebase:firebase-auth:11.8.0' //11.8.0 seems to be only last version before 12 that works with 25.3.1 support library
 }
 
 apply plugin: 'com.google.gms.google-services'

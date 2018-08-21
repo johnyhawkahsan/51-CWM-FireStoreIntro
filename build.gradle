@@ -3,10 +3,11 @@
 buildscript {
     repositories {
         jcenter()
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.1'
-        classpath 'com.google.gms:google-services:3.1.0' // Add this line- According to FireBase
+        classpath 'com.android.tools.build:gradle:3.1.4'
+        classpath 'com.google.gms:google-services:3.2.0' // Add this line- According to FireBase
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -15,11 +16,8 @@ buildscript {
 
 allprojects {
     repositories {
+        google()
         jcenter()
-        // Required for 'com.firebaseui:firebase-ui:1.1.1'
-        maven {
-            url 'https://maven.google.com'
-        }
     }
 }
 
