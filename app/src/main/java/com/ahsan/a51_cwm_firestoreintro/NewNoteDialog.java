@@ -61,7 +61,6 @@ public class NewNoteDialog extends DialogFragment implements View.OnClickListene
             case R.id.create:{
 
                 // insert the new note
-
                 String title = mTitle.getText().toString();
                 String content = mContent.getText().toString();
 
